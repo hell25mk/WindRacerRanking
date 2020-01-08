@@ -38,7 +38,7 @@ namespace Online
         private IEnumerator Get()
         {
 
-            UnityWebRequest request = UnityWebRequest.Get(Define.ServerAddress);
+            UnityWebRequest request = UnityWebRequest.Get(ServerAddress.GetRanking);
 
             request.timeout = 3;
             yield return request.SendWebRequest();
@@ -60,8 +60,9 @@ namespace Online
                     var rank = data["rank"];
                     var name = (string)data["name"];
                     var point = data["point"];
-                    
-                    resultText[index].GetComponent<Text>().text = rank + "\t" + name + "\t" + point;
+                    var time = data["best_time"];
+
+                    resultText[index].GetComponent<Text>().text = rank + "位 \t" + name + " \t" + point + "ポイント \t" + time + "秒";
 
                     index++;
 

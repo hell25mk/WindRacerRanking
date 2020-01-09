@@ -15,9 +15,13 @@ namespace Online
         [SerializeField]
         private Text  nameText;
         [SerializeField]
-        private Text pointText;
+        private Dropdown prefList;
         [SerializeField]
-        private Text timeText;
+        private Text yearText;
+        [SerializeField]
+        private Text monthText;
+        [SerializeField]
+        private Text dayText;
 
         public void Push()
         {
@@ -31,12 +35,20 @@ namespace Online
 
             WWWForm form = new WWWForm();
 
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
             form.AddField("id", idText.text);
             form.AddField("name", nameText.text);
-            form.AddField("point", pointText.text);
-            form.AddField("best_time", timeText.text);
+            form.AddField("pref", prefList.value);
 
-            UnityWebRequest request = UnityWebRequest.Post(ServerAddress.RegisterRanking, form);
+            sb.Append(yearText.text);
+            sb.Append("-");
+            sb.Append(monthText.text);
+            sb.Append("-");
+            sb.Append(dayText.text);
+            form.AddField("birthday", sb.ToString());
+
+             UnityWebRequest request = UnityWebRequest.Post(ServerAddress.RegisterRanking, form);
 
             request.timeout = 3;
             yield return request.SendWebRequest();

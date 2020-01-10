@@ -24,7 +24,7 @@ namespace Online
         private List<Text> resultText;
 
         /// <summary>
-        /// Accessコルーチンを開始する
+        /// @brief Getコルーチンを開始する
         /// </summary>
         public void SendSignalButtonPush()
         {
@@ -33,8 +33,39 @@ namespace Online
 
         }
 
+        /// <summary>
+        /// @brief ランキングに必要なデータを取得し、テキストに出力する
+        /// </summary>
+        /// <param name="request"></param>
+        private void GetRankingData(UnityWebRequest request)
+        {
+
+            string jsonData = request.downloadHandler.text;
+            Debug.Log(jsonData);
+            IList userList = (IList)Json.Deserialize(jsonData);
+
+            int index = 0;
+            foreach (IDictionary data in userList)
+            {
+                var rank = data["rank"];
+                var name = (string)data["name"];
+                var time = data["time"];
+                var date = data["date"];
+
+                resultText[index].GetComponent<Text>().text = rank + "位 \t" + name + " \t" + time + " \t" + date;
+
+                index++;
+
+            }
+
+        }
+
         #region UnityWebRequest
 
+        /// <summary>
+        /// @brief データベースからデータを取得するためにPHPにアクセスする
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator Get()
         {
 
@@ -43,36 +74,15 @@ namespace Online
             request.timeout = 3;
             yield return request.SendWebRequest();
 
+            ResponseLog(request.responseCode);
+
             if (request.isHttpError || request.isNetworkError)
             {
                 Debug.LogError("http Post NG: " + request.error);
+                yield break;
             }
-            else
-            {
-
-                string jsonData = request.downloadHandler.text;
-                Debug.Log(jsonData);
-                IList userList = (IList)Json.Deserialize(jsonData);
-
-                int index = 0;
-                foreach(IDictionary data in userList)
-                {
-                    var rank = data["rank"];
-                    var name = (string)data["name"];
-                    var point = data["point"];
-                    var time = data["best_time"];
-
-                    resultText[index].GetComponent<Text>().text = rank + "位 \t" + name + " \t" + point + "ポイント \t" + time + "秒";
-
-                    index++;
-
-                }
-
-            }
-
-            ResponseLog(request.responseCode);
-
-            Debug.Log("Post");
+            
+            GetRankingData(request);
 
         }
 

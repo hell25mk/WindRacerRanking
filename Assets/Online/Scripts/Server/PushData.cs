@@ -1,4 +1,10 @@
-﻿using System.Collections;
+﻿/*
+ * 
+ * 長嶋
+ * 
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -23,6 +29,9 @@ namespace Online
         [SerializeField]
         private Text dayText;
 
+        /// <summary>
+        /// @brief PostDataコルーチンを開始する
+        /// </summary>
         public void Push()
         {
 
@@ -30,21 +39,23 @@ namespace Online
 
         }
 
+        /// <summary>
+        /// @brief ランキングに登録するデータをPHPに送信する
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator PostData()
         {
 
             WWWForm form = new WWWForm();
 
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
             form.AddField("id", idText.text);
             form.AddField("name", nameText.text);
             form.AddField("pref", prefList.value);
 
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
             sb.Append(yearText.text);
-            sb.Append("-");
             sb.Append(monthText.text);
-            sb.Append("-");
             sb.Append(dayText.text);
             form.AddField("birthday", sb.ToString());
 

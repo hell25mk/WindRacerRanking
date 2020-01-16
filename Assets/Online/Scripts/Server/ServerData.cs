@@ -8,17 +8,16 @@
  * 
  */
 
-namespace Online
+namespace Online.Define
 {
 
-    public class ServerAddress
+    public class ServerData
     {
-        //
-        /*public const string GetRanking = "http://localhost/WindRacer/GetRanking.php";
-        public const string RegisterRanking = "http://localhost/WindRacer/RegisterRecord.php";*/
 
         public const string GetRanking = "http://yda217ny0112.php.xdomain.jp/WindRacer/GetRanking.php";
         public const string RegisterRanking = "http://yda217ny0112.php.xdomain.jp/WindRacer/RegisterRecord.php";
+
+        public const int MaxWaitTime = 15;
 
     }
 

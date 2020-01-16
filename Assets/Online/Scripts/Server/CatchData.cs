@@ -13,20 +13,21 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using MiniJSON;
+using Online.Define;
 
 namespace Online
-{ 
+{
 
     public class CatchData : MonoBehaviour
     {
 
         [SerializeField]
-        private List<Text> resultText;
+        private List<GameObject> resultObject;
 
         /// <summary>
         /// @brief Getコルーチンを開始する
         /// </summary>
-        public void SendSignalButtonPush()
+        public void Start()
         {
 
             StartCoroutine("Get");
@@ -41,23 +42,47 @@ namespace Online
         {
 
             string jsonData = request.downloadHandler.text;
-            Debug.Log(jsonData);
             IList userList = (IList)Json.Deserialize(jsonData);
 
             int index = 0;
             foreach (IDictionary data in userList)
             {
-                var rank = data["rank"];
-                var name = (string)data["name"];
-                var time = data["time"];
-                var date = data["date"];
-
-                resultText[index].GetComponent<Text>().text = rank + "位 \t" + name + " \t" + time + " \t" + date;
+                string rank = (string)data["rank"];
+                string name = (string)data["name"];
+                float time = float.Parse((string)data["time"]);
+                
+                //この部分なんとかしたい
+                resultObject[index].transform.GetChild(0).GetComponent<Text>().text = rank;
+                resultObject[index].transform.GetChild(1).GetComponent<Text>().text = name;
+                resultObject[index].transform.GetChild(2).GetComponent<Text>().text = ConvertStringTime(time);
 
                 index++;
 
+                //ランキングの表示数よりデータが多かった場合、そこで打ち止め
+                if (index + 1 > resultObject.Count)
+                {
+                    break;
+                }
+                
             }
 
+        }
+
+        public string ConvertStringTime(float time)
+        {
+
+            int m = (int)(time / 60.0f);
+            int s = (int)(time % 60.0f);
+            int mm = (int)(time * 10 - (int)time * 10);
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(m.ToString("00"));
+            sb.Append(":");
+            sb.Append(s.ToString("00"));
+            sb.Append(".");
+            sb.Append(mm.ToString("000"));
+
+            return sb.ToString();
         }
 
         #region UnityWebRequest
@@ -69,9 +94,9 @@ namespace Online
         private IEnumerator Get()
         {
 
-            UnityWebRequest request = UnityWebRequest.Get(ServerAddress.GetRanking);
+            UnityWebRequest request = UnityWebRequest.Get(ServerData.GetRanking);
 
-            request.timeout = 3;
+            request.timeout = ServerData.MaxWaitTime;
             yield return request.SendWebRequest();
 
             ResponseLog(request.responseCode);

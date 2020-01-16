@@ -9,11 +9,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Online.Define;
 
 namespace Online
 {
 
-    public class PushData : MonoBehaviour
+    public class RegisterUserData : MonoBehaviour
     {
 
         [SerializeField]
@@ -32,18 +33,18 @@ namespace Online
         /// <summary>
         /// @brief PostDataコルーチンを開始する
         /// </summary>
-        public void Push()
+        public void Register()
         {
 
-            StartCoroutine("PostData");
+            StartCoroutine("Push");
 
         }
 
         /// <summary>
-        /// @brief ランキングに登録するデータをPHPに送信する
+        /// @brief 入力されたユーザーの情報をPHPに送信する
         /// </summary>
         /// <returns></returns>
-        private IEnumerator PostData()
+        private IEnumerator Push()
         {
 
             WWWForm form = new WWWForm();
@@ -59,9 +60,9 @@ namespace Online
             sb.Append(dayText.text);
             form.AddField("birthday", sb.ToString());
 
-             UnityWebRequest request = UnityWebRequest.Post(ServerAddress.RegisterRanking, form);
+             UnityWebRequest request = UnityWebRequest.Post(ServerData.RegisterRanking, form);
 
-            request.timeout = 3;
+            request.timeout = ServerData.MaxWaitTime;
             yield return request.SendWebRequest();
 
         }

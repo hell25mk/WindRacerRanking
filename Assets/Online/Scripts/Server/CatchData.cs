@@ -13,66 +13,101 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using MiniJSON;
+using Online.Define;
 
 namespace Online
-{ 
+{
 
     public class CatchData : MonoBehaviour
     {
 
         [SerializeField]
-        private List<Text> resultText;
+        private List<GameObject> resultObject;
 
         /// <summary>
-        /// Accessコルーチンを開始する
+        /// @brief Getコルーチンを開始する
         /// </summary>
-        public void SendSignalButtonPush()
+        public void Start()
         {
 
             StartCoroutine("Get");
 
         }
 
+        /// <summary>
+        /// @brief ランキングに必要なデータを取得し、テキストに出力する
+        /// </summary>
+        /// <param name="request"></param>
+        private void GetRankingData(UnityWebRequest request)
+        {
+
+            string jsonData = request.downloadHandler.text;
+            IList userList = (IList)Json.Deserialize(jsonData);
+
+            int index = 0;
+            foreach (IDictionary data in userList)
+            {
+                string rank = (string)data["rank"];
+                string name = (string)data["name"];
+                float time = float.Parse((string)data["time"]);
+                
+                //この部分なんとかしたい
+                resultObject[index].transform.GetChild(0).GetComponent<Text>().text = rank;
+                resultObject[index].transform.GetChild(1).GetComponent<Text>().text = name;
+                resultObject[index].transform.GetChild(2).GetComponent<Text>().text = ConvertStringTime(time);
+
+                index++;
+
+                //ランキングの表示数よりデータが多かった場合、そこで打ち止め
+                if (index + 1 > resultObject.Count)
+                {
+                    break;
+                }
+                
+            }
+
+        }
+
+        public string ConvertStringTime(float time)
+        {
+
+            int m = (int)(time / 60.0f);
+            int s = (int)(time % 60.0f);
+            int mm = (int)(time * 10 - (int)time * 10);
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(m.ToString("00"));
+            sb.Append(":");
+            sb.Append(s.ToString("00"));
+            sb.Append(".");
+            sb.Append(mm.ToString("000"));
+
+            return sb.ToString();
+        }
+
         #region UnityWebRequest
 
+        /// <summary>
+        /// @brief データベースからデータを取得するためにPHPにアクセスする
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator Get()
         {
 
-            UnityWebRequest request = UnityWebRequest.Get(ServerAddress.GetRanking);
+            UnityWebRequest request = UnityWebRequest.Get(ServerData.GetRanking);
 
-            request.timeout = 3;
+            request.timeout = ServerData.MaxWaitTime;
             yield return request.SendWebRequest();
+
+            ResponseLog(request.responseCode);
 
             if (request.isHttpError || request.isNetworkError)
             {
                 Debug.LogError("http Post NG: " + request.error);
+                yield break;
             }
-            else
-            {
-
-                string jsonData = request.downloadHandler.text;
-                Debug.Log(jsonData);
-                IList userList = (IList)Json.Deserialize(jsonData);
-
-                int index = 0;
-                foreach(IDictionary data in userList)
-                {
-                    var rank = data["rank"];
-                    var name = (string)data["name"];
-                    var point = data["point"];
-                    var time = data["best_time"];
-
-                    resultText[index].GetComponent<Text>().text = rank + "位 \t" + name + " \t" + point + "ポイント \t" + time + "秒";
-
-                    index++;
-
-                }
-
-            }
-
-            ResponseLog(request.responseCode);
-
-            Debug.Log("Post");
+            
+            GetRankingData(request);
 
         }
 

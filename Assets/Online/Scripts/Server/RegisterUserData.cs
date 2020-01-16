@@ -1,13 +1,20 @@
-﻿using System.Collections;
+﻿/*
+ * 
+ * 長嶋
+ * 
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Online.Define;
 
 namespace Online
 {
 
-    public class PushData : MonoBehaviour
+    public class RegisterUserData : MonoBehaviour
     {
 
         [SerializeField]
@@ -23,34 +30,39 @@ namespace Online
         [SerializeField]
         private Text dayText;
 
-        public void Push()
+        /// <summary>
+        /// @brief PostDataコルーチンを開始する
+        /// </summary>
+        public void Register()
         {
 
-            StartCoroutine("PostData");
+            StartCoroutine("Push");
 
         }
 
-        private IEnumerator PostData()
+        /// <summary>
+        /// @brief 入力されたユーザーの情報をPHPに送信する
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator Push()
         {
 
             WWWForm form = new WWWForm();
-
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
             form.AddField("id", idText.text);
             form.AddField("name", nameText.text);
             form.AddField("pref", prefList.value);
 
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
             sb.Append(yearText.text);
-            sb.Append("-");
             sb.Append(monthText.text);
-            sb.Append("-");
             sb.Append(dayText.text);
             form.AddField("birthday", sb.ToString());
 
-             UnityWebRequest request = UnityWebRequest.Post(ServerAddress.RegisterRanking, form);
+             UnityWebRequest request = UnityWebRequest.Post(ServerData.RegisterRanking, form);
 
-            request.timeout = 3;
+            request.timeout = ServerData.MaxWaitTime;
             yield return request.SendWebRequest();
 
         }

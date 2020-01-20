@@ -14,8 +14,9 @@ namespace Online.Define
     public class ServerData
     {
 
-        public const string GetRanking = "http://yda217ny0112.php.xdomain.jp/WindRacer/GetRanking.php";
-        public const string RegisterRanking = "http://yda217ny0112.php.xdomain.jp/WindRacer/RegisterRecord.php";
+        public const string GetRanking = "http://ydasailing.php.xdomain.jp/WindRacer/GetRanking.php";
+        public const string RegisterRanking = "http://ydasailing.php.xdomain.jp/WindRacer/RegisterRecord.php";
+        public const string RegisterUserData = "http://ydasailing.php.xdomain.jp/WindRacer/RegisterUserData.php";
 
         public const int MaxWaitTime = 15;
 

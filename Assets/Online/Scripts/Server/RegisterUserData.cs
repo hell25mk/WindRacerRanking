@@ -18,8 +18,6 @@ namespace Online
     {
 
         [SerializeField]
-        private Text idText;
-        [SerializeField]
         private Text  nameText;
         [SerializeField]
         private Dropdown prefList;
@@ -36,7 +34,16 @@ namespace Online
         public void Register()
         {
 
-            StartCoroutine("Push");
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+            sb.Append(yearText.text);
+            sb.Append(monthText.text);
+            sb.Append(dayText.text);
+
+            Debug.Log(nameText.text);
+            Debug.Log(prefList.value);
+            Debug.Log(sb.ToString());
+            //StartCoroutine("Push");
 
         }
 
@@ -49,7 +56,6 @@ namespace Online
 
             WWWForm form = new WWWForm();
 
-            form.AddField("id", idText.text);
             form.AddField("name", nameText.text);
             form.AddField("pref", prefList.value);
 
@@ -60,7 +66,7 @@ namespace Online
             sb.Append(dayText.text);
             form.AddField("birthday", sb.ToString());
 
-             UnityWebRequest request = UnityWebRequest.Post(ServerData.RegisterRanking, form);
+            UnityWebRequest request = UnityWebRequest.Post(ServerData.RegisterUserData, form);
 
             request.timeout = ServerData.MaxWaitTime;
             yield return request.SendWebRequest();

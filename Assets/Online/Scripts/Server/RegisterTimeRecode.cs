@@ -14,7 +14,7 @@ using Online.Define;
 namespace Online
 {
 
-    public class RegisterRecode : MonoBehaviour
+    public class RegisterTimeRecode : MonoBehaviour
     {
 
         [SerializeField]

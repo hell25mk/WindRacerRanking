@@ -28,22 +28,16 @@ namespace Online
         [SerializeField]
         private Text dayText;
 
+        [SerializeField]
+        private string id = "000000000";
+
         /// <summary>
         /// @brief PostDataコルーチンを開始する
         /// </summary>
         public void Register()
         {
 
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-            sb.Append(yearText.text);
-            sb.Append(monthText.text);
-            sb.Append(dayText.text);
-
-            Debug.Log(nameText.text);
-            Debug.Log(prefList.value);
-            Debug.Log(sb.ToString());
-            //StartCoroutine("Push");
+            StartCoroutine("Push");
 
         }
 
@@ -56,6 +50,7 @@ namespace Online
 
             WWWForm form = new WWWForm();
 
+            form.AddField("id", id);
             form.AddField("name", nameText.text);
             form.AddField("pref", prefList.value);
 
@@ -70,6 +65,45 @@ namespace Online
 
             request.timeout = ServerData.MaxWaitTime;
             yield return request.SendWebRequest();
+
+            Debug.Log(request.downloadHandler.text);
+
+            ResponseLog(request.responseCode);
+
+            if (request.isHttpError || request.isNetworkError)
+            {
+                Debug.LogError("http Post NG: " + request.error);
+                gameObject.GetComponent<Button>().interactable = true;
+                Debug.Log("登録に失敗しました");
+                yield break;
+            }
+
+            Debug.Log("登録が完了しました");
+
+        }
+
+        /// <summary>
+        /// @brief 下記サイトのレスポンス結果をLogに出力する
+        /// https://developer.mozilla.org/ja/docs/Web/HTTP/Status
+        /// </summary>
+        /// <param name="code"></param>
+        private void ResponseLog(long code)
+        {
+
+            switch (code)
+            {
+                case 200:
+                    Debug.Log("success");
+                    break;
+                case 404:
+                    Debug.LogWarning("not found");
+                    break;
+                case 500:
+                    Debug.LogWarning("server error");
+                    break;
+                default:
+                    break;
+            }
 
         }
 

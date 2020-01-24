@@ -1422,7 +1422,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u306A\u307E\u3048"
+  m_Text: "\u540D\u524D"
 --- !u!222 &661762181
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1593,6 +1593,7 @@ MonoBehaviour:
   yearText: {fileID: 1474293585}
   monthText: {fileID: 154495969}
   dayText: {fileID: 1273380844}
+  id: 000000000
 --- !u!1 &730547810
 GameObject:
   m_ObjectHideFlags: 0
@@ -2004,7 +2005,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u305F\u3093\u3058\u3087\u3046\u3073"
+  m_Text: "\u8A95\u751F\u65E5"
 --- !u!222 &873724705
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3948,7 +3949,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u30A8\u30EA\u30A2"
+  m_Text: "\u5730\u57DF"
 --- !u!222 &1382069088
 CanvasRenderer:
   m_ObjectHideFlags: 0

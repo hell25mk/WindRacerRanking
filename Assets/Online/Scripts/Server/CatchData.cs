@@ -20,9 +20,13 @@ namespace Online
 
     public class CatchData : MonoBehaviour
     {
+        [SerializeField]
+        private GameObject rankPrefab;
 
         [SerializeField]
-        private List<GameObject> resultObject;
+        private GameObject rankingContents;
+
+        private List<GameObject> resultObject = new List<GameObject>();
 
         /// <summary>
         /// @brief Getコルーチンを開始する
@@ -44,26 +48,36 @@ namespace Online
             string jsonData = request.downloadHandler.text;
             IList userList = (IList)Json.Deserialize(jsonData);
 
+
             int index = 0;
             foreach (IDictionary data in userList)
             {
                 string rank = (string)data["rank"];
                 string name = (string)data["name"];
                 float time = float.Parse((string)data["time"]);
-                
+
+                //ランキングの1位分生成してコンテンツに親子関係をつける
+                GameObject ranking = Instantiate(rankPrefab) as GameObject;
+                ranking.transform.SetParent(rankingContents.transform, false);
+
+                //リストに追加する
+                resultObject.Add(ranking);
+
                 //この部分なんとかしたい
                 resultObject[index].transform.GetChild(0).GetComponent<Text>().text = rank;
                 resultObject[index].transform.GetChild(1).GetComponent<Text>().text = name;
                 resultObject[index].transform.GetChild(2).GetComponent<Text>().text = ConvertStringTime(time);
 
+
                 index++;
 
                 //ランキングの表示数よりデータが多かった場合、そこで打ち止め
-                if (index + 1 > resultObject.Count)
+                //if (index + 1 > resultObject.Count)
+                if (index > resultObject.Count)
                 {
                     break;
                 }
-                
+
             }
 
         }
@@ -106,7 +120,7 @@ namespace Online
                 Debug.LogError("http Post NG: " + request.error);
                 yield break;
             }
-            
+
             GetRankingData(request);
 
         }
